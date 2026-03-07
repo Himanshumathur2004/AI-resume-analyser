@@ -51,6 +51,7 @@ An intelligent web application that analyzes resumes and provides insights to he
 
 ## 📂 Project Structure
 
+  <img src="https://github.com/Himanshumathur2004/AI-resume-analyser/blob/main/Screenshot%202026-03-08%20000330.jpg" width="80%" />
 
 AI-Resume-Analyser
 │
