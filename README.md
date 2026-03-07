@@ -34,7 +34,24 @@ An intelligent web application that analyzes resumes and provides insights to he
 
 ---
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="https://github.com/Himanshumathur2004/AI-resume-analyser/blob/main/Screenshot%20(467).png" width="45%" />
+  <img src="https://github.com/Himanshumathur2004/AI-resume-analyser/blob/main/Screenshot%20(464).png" width="45%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Himanshumathur2004/AI-resume-analyser/blob/main/Screenshot%20(463).png" width="45%" />
+  <img src="https://github.com/Himanshumathur2004/AI-resume-analyser/blob/main/Screenshot%20(466).png" width="45%" />
+</p>
+
+
+---
+
 ## 📂 Project Structure
+
+
 AI-Resume-Analyser
 │
 ├── src
@@ -59,12 +76,25 @@ AI-Resume-Analyser
 
 ### 1. Clone the repository
 
+
+git clone https://github.com/Himanshumathur2004/AI-resume-analyser.git
+
+
 ### 2. Navigate to project folder
 
+
+cd AI-resume-analyser
+
+
 ### 3. Run the Spring Boot application
+
+
 mvn spring-boot:run
 
+
 ### 4. Open in browser
+
+
 http://localhost:8080
 
 
@@ -84,6 +114,7 @@ http://localhost:8080
 
 Sensitive information like API keys should not be stored directly in the repository.
 
+---
 
 ##  Future Improvements
 
@@ -103,7 +134,3 @@ Rajiv Gandhi Institute of Petroleum Technology
 
 GitHub:  
 https://github.com/Himanshumathur2004
-
----
-
-⭐ If you like this project, consider giving it a star on GitHub.
