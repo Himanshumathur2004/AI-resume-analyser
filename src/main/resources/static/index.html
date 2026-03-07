@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeIQ — AI-Powered Resume Analyser</title>
+    <meta name="description"
+        content="Upload your resume and get instant AI-powered analysis with scores, strengths, weaknesses, and actionable suggestions to land your dream job.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Animated background -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span class="brand-name">ResumeIQ</span>
+                <span class="brand-badge">AI</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-link active" id="nav-home" onclick="showSection('upload')">Analyser</button>
+                <button class="nav-link" id="nav-history" onclick="showSection('history')"
+                    style="display:none">History</button>
+                <button class="nav-link" id="nav-about" onclick="showSection('about')">About</button>
+                <button class="nav-link" id="nav-logout" onclick="logout()"
+                    style="display:none; color: var(--red);">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ========== AUTH SECTION ========== -->
+        <section class="section active" id="section-auth">
+            <div class="hero" style="padding-bottom: 20px;">
+                <h1 class="hero-title">
+                    Welcome to <span class="gradient-text">ResumeIQ</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Please login or register to analyze your resume and save your history.
+                </p>
+            </div>
+            <div class="upload-section">
+                <div class="upload-card" style="max-width: 400px; margin: 0 auto;">
+                    <div id="auth-form-container">
+                        <!-- Login Form -->
+                        <div id="login-form">
+                            <h3 class="card-title" style="text-align: center;">Login</h3>
+                            <input type="text" id="login-username" placeholder="Username"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: var(--text-primary); margin-bottom: 12px;">
+                            <input type="password" id="login-password" placeholder="Password"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: var(--text-primary); margin-bottom: 20px;">
+                            <button class="analyse-btn" onclick="login()"
+                                style="margin-top: 0; padding: 12px;">Login</button>
+                            <p
+                                style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--text-secondary);">
+                                Don't have an account? <a href="#" onclick="toggleAuthForm()"
+                                    style="color: var(--accent-primary); text-decoration: none;">Register</a>
+                            </p>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div id="register-form" style="display: none;">
+                            <h3 class="card-title" style="text-align: center;">Register</h3>
+                            <input type="text" id="reg-username" placeholder="Username"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: var(--text-primary); margin-bottom: 12px;">
+                            <input type="password" id="reg-password" placeholder="Password"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: var(--text-primary); margin-bottom: 20px;">
+                            <button class="analyse-btn" onclick="register()"
+                                style="margin-top: 0; padding: 12px; background: linear-gradient(135deg, var(--green), var(--cyan));">Register</button>
+                            <p
+                                style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--text-secondary);">
+                                Already have an account? <a href="#" onclick="toggleAuthForm()"
+                                    style="color: var(--accent-primary); text-decoration: none;">Login</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== UPLOAD SECTION ========== -->
+        <section class="section" id="section-upload">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    Powered by GPT AI
+                </div>
+                <h1 class="hero-title">
+                    Analyse Your Resume with
+                    <span class="gradient-text">Artificial Intelligence</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Get instant ATS scores, skill gap analysis, and personalized suggestions
+                    to help you land your dream job faster.
+                </p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number" id="stat-total">—</span>
+                        <span class="hero-stat-label">Resumes Analysed</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number" id="stat-avg">—</span>
+                        <span class="hero-stat-label">Avg. Score</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">6</span>
+                        <span class="hero-stat-label">Score Dimensions</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="upload-section">
+                <div class="upload-card" id="upload-card">
+                    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+                        ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                        ondrop="handleDrop(event)">
+                        <div class="upload-icon-wrapper">
+                            <div class="upload-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6h.1a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <div class="upload-icon-ring"></div>
+                        </div>
+                        <h3 class="upload-title">Drop your resume here</h3>
+                        <p class="upload-subtitle">or <span class="upload-link">click to browse</span></p>
+                        <div class="upload-formats">
+                            <span class="format-badge">PDF</span>
+                            <span class="format-badge">DOCX</span>
+                            <span class="format-badge">TXT</span>
+                        </div>
+                        <p class="upload-limit">Maximum file size: 10MB</p>
+                    </div>
+
+                    <input type="file" id="file-input" accept=".pdf,.docx,.doc,.txt" style="display:none"
+                        onchange="handleFileSelect(event)">
+
+                    <!-- File Preview -->
+                    <div class="file-preview hidden" id="file-preview">
+                        <div class="file-preview-icon" id="file-preview-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="file-preview-info">
+                            <span class="file-preview-name" id="file-preview-name">resume.pdf</span>
+                            <span class="file-preview-size" id="file-preview-size">2.4 MB</span>
+                        </div>
+                        <button class="file-preview-remove" onclick="clearFile()" title="Remove file">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Job Description Input -->
+                    <div class="jd-section"
+                        style="margin-top: 24px; text-align: left; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 12px; border: 1px dashed var(--border-color); margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 12px; color: var(--text-color); font-size: 1rem;">Match with Job
+                            Description (Optional)</h4>
+                        <textarea id="jd-text"
+                            placeholder="Paste job description text here to get match score and specific keyword suggestions..."
+                            style="width: 100%; height: 80px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-color); margin-bottom: 12px; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">Or upload a JD file:</span>
+                            <input type="file" id="jd-file-input" accept=".pdf,.docx,.doc,.txt" style="display:none"
+                                onchange="handleJdFileSelect(event)">
+                            <button class="action-btn" onclick="document.getElementById('jd-file-input').click()"
+                                style="padding: 6px 12px; font-size: 0.9rem; cursor: pointer;">Select JD File</button>
+                        </div>
+
+                        <div id="jd-file-preview"
+                            style="margin-top: 10px; font-size: 0.9rem; color: var(--primary-color); display: none; align-items: center;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-right: 6px;">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span id="jd-file-name"></span>
+                            <button onclick="clearJdFile()"
+                                style="background:none; border:none; color: #ef4444; cursor: pointer; margin-left: 10px; padding: 2px;"
+                                title="Remove JD file">✕</button>
+                        </div>
+                    </div>
+
+                    <button class="analyse-btn" id="analyse-btn" onclick="analyseResume()" disabled>
+                        <span class="analyse-btn-text">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Analyse with AI
+                        </span>
+                        <span class="analyse-btn-loading hidden">
+                            <span class="spinner"></span>
+                            Analysing...
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Progress -->
+                <div class="progress-card hidden" id="progress-card">
+                    <div class="progress-steps">
+                        <div class="progress-step active" id="step-1">
+                            <div class="step-dot"></div>
+                            <span>Uploading file</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" id="step-2">
+                            <div class="step-dot"></div>
+                            <span>Extracting text</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" id="step-3">
+                            <div class="step-dot"></div>
+                            <span>AI Analysis</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" id="step-4">
+                            <div class="step-dot"></div>
+                            <span>Generating Report</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <p class="progress-message" id="progress-message">Preparing your analysis...</p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="--icon-color: #6366f1;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Multi-Dimensional Scoring</h3>
+                    <p>Get scores for ATS compatibility, skills, experience, education, and formatting.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--icon-color: #10b981;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>AI-Powered Insights</h3>
+                    <p>GPT analyses your resume for strengths, weaknesses, and personalized recommendations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--icon-color: #f59e0b;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Keyword Analysis</h3>
+                    <p>Discover which keywords are present in your resume and which crucial ones are missing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--icon-color: #ec4899;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Actionable Suggestions</h3>
+                    <p>Get specific, implementable suggestions to immediately improve your resume's impact.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== RESULTS SECTION ========== -->
+        <section class="section" id="section-results">
+            <div class="results-header">
+                <button class="back-btn" onclick="showSection('upload')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    New Analysis
+                </button>
+                <div class="results-title-group">
+                    <h2 class="results-title">Analysis Complete</h2>
+                    <p class="results-subtitle" id="result-candidate-name">Loading...</p>
+                </div>
+                <div class="results-actions">
+                    <button class="action-btn" onclick="window.print()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Print
+                    </button>
+                </div>
+            </div>
+
+            <!-- Score Overview -->
+            <div class="score-overview">
+                <!-- Big Score -->
+                <div class="score-main-card">
+                    <div class="score-circle-container">
+                        <svg class="score-ring" width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.1)"
+                                stroke-width="12" />
+                            <circle cx="100" cy="100" r="85" fill="none" stroke="url(#scoreGradient)" stroke-width="12"
+                                stroke-linecap="round" stroke-dasharray="534" stroke-dashoffset="534"
+                                id="score-ring-circle" transform="rotate(-90 100 100)" />
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="score-center">
+                            <span class="score-number" id="result-score">0</span>
+                            <span class="score-label">/100</span>
+                            <span class="score-grade" id="result-grade">—</span>
+                        </div>
+                    </div>
+                    <div class="score-meta">
+                        <div class="score-grade-badge" id="result-grade-badge">Loading...</div>
+                        <p class="score-summary" id="result-summary">Analysing your resume...</p>
+                    </div>
+                </div>
+
+                <!-- Score Breakdown -->
+                <div class="score-breakdown-card">
+                    <h3 class="card-title">Score Breakdown</h3>
+                    <div class="score-bars">
+                        <div class="score-bar-item" id="jd-score-container" style="display: none;">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">JD Match</span>
+                                <span class="score-bar-value" id="bar-jd-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill" id="bar-jd"
+                                    style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                            </div>
+                        </div>
+                        <div class="score-bar-item">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">ATS Compatibility</span>
+                                <span class="score-bar-value" id="bar-ats-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill ats-color" id="bar-ats" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="score-bar-item">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">Skills</span>
+                                <span class="score-bar-value" id="bar-skills-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill skills-color" id="bar-skills" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="score-bar-item">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">Experience</span>
+                                <span class="score-bar-value" id="bar-exp-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill exp-color" id="bar-exp" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="score-bar-item">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">Education</span>
+                                <span class="score-bar-value" id="bar-edu-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill edu-color" id="bar-edu" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="score-bar-item">
+                            <div class="score-bar-header">
+                                <span class="score-bar-label">Formatting</span>
+                                <span class="score-bar-value" id="bar-fmt-val">0</span>
+                            </div>
+                            <div class="score-bar-track">
+                                <div class="score-bar-fill fmt-color" id="bar-fmt" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="details-grid">
+                <!-- Skills -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon skills-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>Extracted Skills</h3>
+                    </div>
+                    <div class="tags-container" id="result-skills"></div>
+                </div>
+
+                <!-- Strengths -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon strength-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905C11 5.345 9.5 7 9 7H4a2 2 0 00-2 2v5.5a2 2 0 002 2h3.5"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>Strengths</h3>
+                    </div>
+                    <ul class="detail-list strength-list" id="result-strengths"></ul>
+                </div>
+
+                <!-- Weaknesses -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon weakness-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-1.081 1.5-2.732 2-3.096h4a2 2 0 002-2V9.5a2 2 0 00-2-2h-3.5"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>Areas to Improve</h3>
+                    </div>
+                    <ul class="detail-list weakness-list" id="result-weaknesses"></ul>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="detail-card full-width-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon suggestion-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>🎯 AI Suggestions to Improve Your Resume</h3>
+                    </div>
+                    <div class="suggestions-list" id="result-suggestions"></div>
+                </div>
+
+                <!-- Keywords -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon keyword-found-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>Keywords Found</h3>
+                    </div>
+                    <div class="tags-container" id="result-keywords-found"></div>
+                </div>
+
+                <!-- Missing Keywords -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon keyword-missing-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>Missing Keywords</h3>
+                    </div>
+                    <div class="tags-container" id="result-keywords-missing"></div>
+                </div>
+
+                <!-- Interview Questions -->
+                <div class="detail-card full-width-card">
+                    <div class="detail-card-header">
+                        <div class="detail-icon suggestion-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3>💬 Personalized Interview Questions</h3>
+                    </div>
+                    <div class="suggestions-list" id="result-interview-questions"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== HISTORY SECTION ========== -->
+        <section class="section" id="section-history">
+            <div class="section-header">
+                <h2 class="section-title">Analysis History</h2>
+                <p class="section-subtitle">All past resume analyses</p>
+            </div>
+            <div class="history-grid" id="history-grid">
+                <div class="loading-placeholder">
+                    <div class="spinner large-spinner"></div>
+                    <p>Loading history...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ABOUT SECTION ========== -->
+        <section class="section" id="section-about">
+            <div class="about-content">
+                <div class="about-hero">
+                    <h2 class="about-title">About <span class="gradient-text">ResumeIQ</span></h2>
+                    <p class="about-desc">
+                        ResumeIQ is an AI-powered resume analysis platform that helps job seekers get noticed.
+                        Using HuggingFace's Mistral-7B model, we provide deep insights into your resume's
+                        strengths, weaknesses, and specific recommendations to help you stand out.
+                    </p>
+                </div>
+                <div class="about-tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-icon">⚡</div>
+                        <h3>Spring Boot 3</h3>
+                        <p>Robust Java backend with JPA, REST APIs, and multipart upload handling</p>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">🧠</div>
+                        <h3>OpenAI GPT</h3>
+                        <p>State-of-the-art LLM for intelligent resume parsing and analysis</p>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">🗄️</div>
+                        <h3>MySQL Database</h3>
+                        <p>Persistent storage of all analyses with full history and statistics</p>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">📄</div>
+                        <h3>PDFBox + POI</h3>
+                        <p>Industry-standard libraries for PDF and DOCX text extraction</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon" id="toast-icon"></div>
+        <p class="toast-msg" id="toast-msg"></p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

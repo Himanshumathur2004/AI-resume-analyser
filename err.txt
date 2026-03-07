@@ -1,0 +1,4 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   145  100   122  100    23    226     42 --:--:-- --:--:-- --:--:--   271100   145  100   122  100    23    226     42 --:--:-- --:--:-- --:--:--   270
+{"error":"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead."}
