@@ -1,0 +1,153 @@
+# AI Resume Analyser Architecture & Flows
+
+Here are the comprehensive Mermaid diagrams illustrating the architecture, system flow, and database schema for the **AI Resume Analyser** project. 
+
+## 1. High-Level Architecture
+This logical architecture diagram shows how the frontend interacts with the Spring Boot backend, traversing through controllers, services, repositories, and ultimately connecting to the database and the OpenAI API.
+
+```mermaid
+graph TD
+  %% Styling configuration for premium look
+  classDef user fill:#ffecb3,stroke:#ffb300,stroke-width:2px,color:#333;
+  classDef frontend fill:#bbdefb,stroke:#1e88e5,stroke-width:2px,color:#333,rx:10,ry:10;
+  classDef controller fill:#c8e6c9,stroke:#43a047,stroke-width:2px,color:#333,rx:5,ry:5;
+  classDef service fill:#ffe0b2,stroke:#fb8c00,stroke-width:2px,color:#333,rx:5,ry:5;
+  classDef repository fill:#e1bee7,stroke:#8e24aa,stroke-width:2px,color:#333,rx:5,ry:5;
+  classDef database fill:#f8bbd0,stroke:#d81b60,stroke-width:2px,shape:cylinder,color:#333;
+  classDef external fill:#cfd8dc,stroke:#546e7a,stroke-width:2px,stroke-dasharray: 5 5,color:#333;
+
+  %% Actors
+  User((User)):::user
+  UI["Frontend Client<br/>(Browser)"]:::frontend
+
+  %% Layer 1: Presentation
+  subgraph Presentation Layer
+    AuthController["AuthController<br/>REST API (/api/auth)"]:::controller
+    ResumeController["ResumeController<br/>REST API (/api/resume)"]:::controller
+  end
+
+  %% Layer 2: Business Logic
+  subgraph Business Logic Layer
+    ResumeAnalysisService["ResumeAnalysisService<br/>Manages Analysis Workflow"]:::service
+    FileParserService["FileParserService<br/>(Apache PDFBox / POI)"]:::service
+    OpenAIService["OpenAIService<br/>OkHttp LLM Integration"]:::service
+  end
+
+  %% Layer 3: Data Access
+  subgraph Data Access Layer
+    UserRepository["UserRepository<br/>(Spring Data JPA)"]:::repository
+    ResumeAnalysisRepository["ResumeAnalysisRepository<br/>(Spring Data JPA)"]:::repository
+  end
+
+  %% Infrastructure
+  DB[("MySQL / H2 DB")]:::database
+  LLM["OpenAI LLM API"]:::external
+
+  %% Core Interactions
+  User -->|Login / Upload Document| UI
+  
+  UI -->|Authenticate| AuthController
+  UI -->|Upload Resume / JD| ResumeController
+  
+  AuthController -->|Find/Save| UserRepository
+  UserRepository -->|JPA| DB
+  
+  ResumeController -->|Parse File| FileParserService
+  ResumeController -->|Initiate Analysis| ResumeAnalysisService
+  
+  ResumeAnalysisService -->|Extract Text| FileParserService
+  ResumeAnalysisService -->|Build Prompt & Query| OpenAIService
+  OpenAIService -->|HTTP Request| LLM
+  LLM -.->|JSON Evaluation| OpenAIService
+  OpenAIService -->|Parsed Result| ResumeAnalysisService
+  
+  ResumeAnalysisService -->|Save Analysis| ResumeAnalysisRepository
+  ResumeAnalysisRepository -->|JPA| DB
+```
+
+---
+
+## 2. Resume Processing Sequence Diagram
+This scenario details the exact sequence of events when a user uploads their resume.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant UI as Frontend Browser
+    participant RC as ResumeController
+    participant FS as FileParserService
+    participant RS as ResumeAnalysisService
+    participant OS as OpenAIService
+    participant OAI as OpenAI API
+    participant DB as SQL Database
+
+    U->>UI: Uploads Resume (PDF/DOCX) & Appends optional JD
+    UI->>RC: POST /api/resume/analyze (MultipartForm)
+    RC->>FS: extractText(file)
+    FS-->>RC: String (Extracted Resume Text)
+    
+    RC->>RS: analyzeResume(userId, text, jd, originalFileName)
+    RS->>DB: Save "PENDING" Analysis State (Optional)
+    
+    RS->>OS: callLLMForAnalysis(text, jd)
+    OS->>OAI: HTTP POST (Prompt including JD and Text)
+    Note over OAI,OS: Analyzing structure, missing skills,<br/>match score & creating summary
+    OAI-->>OS: JSON Response (Score, Suggestions)
+    
+    OS-->>RS: Parsed Analysis Map
+    
+    RS->>DB: Save processing results into ResumeAnalysis Entity
+    DB-->>RS: Analysis Details Saved Successfully
+    
+    RS-->>RC: Returns 'ResumeAnalysisResponse' DTO
+    RC-->>UI: 200 OK + JSON DTO
+    UI-->>U: Visualizes Scores, Explanations, and Missing Skills
+```
+
+---
+
+## 3. Database Entity Relationship Diagram (ERD)
+This diagram models the key objects stored in the `MySQL` / `H2` database and how they relate to the application context.
+
+```mermaid
+erDiagram
+    %% Entities
+    USER {
+        bigint id PK
+        string username
+        string password
+        string email
+        string role
+        datetime createdAt
+    }
+
+    RESUME_ANALYSIS {
+        bigint id PK
+        bigint user_id FK
+        string file_name
+        string original_file_name
+        string file_type
+        bigint file_size
+        string candidate_name
+        string candidate_email 
+        int overall_score
+        int ats_score
+        int skills_score
+        int experience_score
+        int formatting_score
+        int jd_match_score
+        text extracted_skills
+        text strengths
+        text weaknesses
+        text suggestions
+        text keywords_missing
+        longtext raw_text
+        string analysis_status
+        datetime created_at
+        datetime updated_at
+    }
+
+    %% Relationships
+    USER ||--o{ RESUME_ANALYSIS : "owns / initiates"
+```
